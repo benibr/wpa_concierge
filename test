@@ -1,0 +1,20 @@
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=network
+update_config=1
+
+network={
+	ssid="karlsruhe.freifunk.net"
+	key_mgmt=NONE
+	auth_alg=OPEN
+	disabled=1
+}
+
+network={
+	ssid="entropia-enterprise-g"
+	proto=RSN
+	key_mgmt=WPA-EAP
+	pairwise=CCMP
+	auth_alg=OPEN
+	eap=MSCHAPV2
+	identity="entropia"
+	disabled=1
+}
