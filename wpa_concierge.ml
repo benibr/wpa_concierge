@@ -14,7 +14,7 @@ let find_interface =
 (* iwlist scan 
  *
  *)
-let iwlist_scan = 
+let network_scan = 
   Logs.debug (fun m -> m "scanning for available networks");
   let lines = ref [] in
   let iwconfig_chan = Unix.open_process_in "iwlist scan 2>/dev/null" in
@@ -70,10 +70,10 @@ let generate_config =
 (* parse cmd options *)
 let select_workmode arg =
   match arg with
-  | "disconnect" -> Printf.printf "disconnecting not implemented"
-  | "scan" -> Printf.printf "scanning not implemented"
-  | "scanning" -> Printf.printf "scanning not implemented"
-  | _ -> write_config generate_config (find_configfile find_interface)
+  | "disconnect"  -> Printf.printf "disconnecting not implemented"
+  | "scan"        -> network_scan interface
+  | "scanning"    -> network_scan interface
+  | _             -> write_config generate_config (find_configfile interface)
 ;;
 
 (* main loop *)
