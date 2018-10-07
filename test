@@ -23,9 +23,3 @@ network={
 	key_mgmt=NONE
 	auth_alg=OPEN
 }
-
-network={
-	ssid="karlsruhe.freifunk.net"
-	key_mgmt=NONE
-	auth_alg=OPEN
-}
