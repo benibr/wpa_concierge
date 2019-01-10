@@ -2,7 +2,7 @@ open Sys
 
 (* network device handling *)
 
-(* iwlist scan 
+(* find wifi interfaces
  *
  *)
 let find_interface = 
@@ -10,21 +10,22 @@ let find_interface =
   Logs.debug (fun m -> m "found the following wlan interface %s" interface);
   interface
 
-
 (* iwlist scan 
  *
  *)
-let network_scan = 
+let network_scan interface =
   Logs.debug (fun m -> m "scanning for available networks");
   let lines = ref [] in
-  let iwconfig_chan = Unix.open_process_in "iwlist scan 2>/dev/null" in
+  let in_chan = Unix.open_process_in "iwlist scan 2>/dev/null" in
   try
   while true; do
-    lines := input_line iwconfig_chan :: !lines
-  done; !lines
+    lines := input_line in_chan :: !lines
+  done; !lines;
+  Printf.printf "this in now type unit"
   with End_of_file ->
-  close_in iwconfig_chan;
-  List.rev !lines ;;
+  close_in in_chan;
+  List.rev !lines;
+  Printf.printf "this is also a unit"
 
 
 (* Configfile handling *)
@@ -64,16 +65,16 @@ let write_config network file =
   close_out write_chan;;
 
 let generate_config =
-(* example data *)
-[ "network={\n"; "\tssid=\"karlsruhe.freifunk.net\"\n"; "\tkey_mgmt=NONE\n"; "\tauth_alg=OPEN\n"; "}\n"]
+  let input = read_line () in
+  let network = [ "network={\n"; "\tssid=\"" ^ input ^ "\"\n" ] in
+  network
 
 (* parse cmd options *)
 let select_workmode arg =
   match arg with
   | "disconnect"  -> Printf.printf "disconnecting not implemented"
-  | "scan"        -> network_scan interface
-  | "scanning"    -> network_scan interface
-  | _             -> write_config generate_config (find_configfile interface)
+  | "scan"        -> network_scan find_interface
+  | _             -> write_config generate_config (find_configfile find_interface)
 ;;
 
 (* main loop *)
@@ -86,7 +87,6 @@ let select_workmode arg =
 *)
 
 let main () =
-  let interface = find_interface in
   let workmode = 
     try Sys.argv.(1)
     with Invalid_argument("index out of bounds") -> "connect" in 
